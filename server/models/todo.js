@@ -5,8 +5,9 @@ const { Schema } = mongoose;
 
 const todoSchema = new Schema({
   name: String,
-  todo: String,
-  date: Date,
+  description: String,
+  status: Number,
+  dueDate: Date,
 })
 
 let Todo = mongoose.model('Todo', todoSchema);

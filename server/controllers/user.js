@@ -1,13 +1,14 @@
-const Todo = require('../models/todo');
+const User = require('../models/user');
 
 class Controller {
   static all(req, res) {
-    Todo.find({})
-      .then(todos => {
-        if (todos.length === 0) {
+    User.find({})
+    .populate('todolist')
+      .then(users => {
+        if (users.length === 0) {
           res.status(204).json({ message: 'data empty' })
         } else {
-          res.status(200).json(todos);
+          res.status(200).json(users);
         }
       })
       .catch(err => {
@@ -17,14 +18,13 @@ class Controller {
   }
   
   static create(req, res) {
-    Todo.create({
+    User.create({
       name: req.body.name,
-      description: req.body.description,
-      status: 0,
-      dueDate: req.body.dueDate
+      email: req.body.email,
+      password: req.body.password
     })
-      .then(newTodo => {
-        res.status(201).json({ message: 'successfully created', newTodo });
+      .then(newUser => {
+        res.status(201).json({ message: 'successfully created', newUser });
       })
       .catch(err => {
         console.log(err);
@@ -33,12 +33,12 @@ class Controller {
   }
   
   static one(req, res) {
-    Todo.findById(req.params.id)
-      .then(todo => {
-        if (!todo) {
+    User.findById(req.params.id)
+      .then(user => {
+        if (!user) {
           res.status(204).json({ message: 'data empty' })
         } else {
-          res.status(200).json(todo);
+          res.status(200).json(user);
         }
       })
       .catch(err => {
@@ -48,21 +48,20 @@ class Controller {
   }
 
   static update(req, res) {
-    Todo.findById(req.params.id)
-      .then(todo => {
-        if (!todo) {
+    User.findById(req.params.id)
+      .then(user => {
+        if (!user) {
           res.status(204).json({ message: 'data not found to update' })
         } else {
-          return todo.update({
+          return user.update({
             name: req.body.name,
-            description: req.body.description,
-            status: req.body.status,
-            dueDate: req.body.dueDate
+            email: req.body.email,
+            password: req.body.password
           })
         }
       })
-      .then(updatedTodo => {
-        res.status(200).json({ message: 'successfully updated', updatedTodo });
+      .then(updatedUser => {
+        res.status(200).json({ message: 'successfully updated', updatedUser });
       })  
       .catch(err => {
         console.log(err);
@@ -71,18 +70,18 @@ class Controller {
   }
 
   static delete(req, res) {
-    let deletedTodo = null;
-    Todo.findById(req.params.id)
-      .then(todo => {
-        if (!todo) {
+    let deletedUser = null;
+    User.findById(req.params.id)
+      .then(user => {
+        if (!user) {
           res.status(204).json({ message: 'data not found to delete' })
         } else {
-          deletedTodo = todo;
-          return todo.delete()
+          deletedUser = user;
+          return user.delete()
         }
       })
       .then(() => {
-        res.status(200).json({ message: 'successfully deleted', deletedTodo});
+        res.status(200).json({ message: 'successfully deleted', deletedUser});
       })  
       .catch(err => {
         console.log(err);
