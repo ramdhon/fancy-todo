@@ -1,20 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="google-signin-client_id"
+    content="721214027769-9nkf9lnt121m8bqne51rmn56klrj14nm.apps.googleusercontent.com">
+
   <title>Todo App</title>
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  
-</head>
-<body>
-  <h1>Welcome to Todo App</h1>
+  <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
 
-  <script
-    src="https://code.jquery.com/jquery-3.3.1.min.js"
-    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <style>
+    .css-lobster {
+      font-family: 'Lobster', cursive;
+    }
+
+    .css-login,
+    .css-register {
+      width: 40%;
+      margin: 0 auto;
+    }
+  </style>
+
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="css-lobster navbar-brand" href="#" onclick="home()">Todo</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="css-dashboard nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Todo Dashboard</a>
+        </li>
+        <li class="css-loggedout nav-item active">
+          <a class="nav-link" href="#" onclick="register()">Sign up <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="css-loggedout nav-item">
+          <a class="nav-link" href="#" onclick="login()">Sign in</a>
+        </li>
+        <li class="css-loggedin nav-item">
+          <a class="nav-link" href="#" onclick="signOut();">Sign out</a>
+        </li>
+      </ul>
+      <form class="css-loggedin form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Find..." aria-label="Search">
+        <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Go</button>
+      </form>
+    </div>
+  </nav>
+
+  <div class="css-loggedout css-home jumbotron jumbotron-fluid">
+    <div class="container">
+      <h1 class="display-4">TODO ME</h1>
+      <p class="lead">Don't miss a single thing! - <a href="#" onclick="register()">Sign up now</a><br><span
+          class="text-muted">Have an account? <a href="#" onclick="login()">Sign in</a> then</span></p>
+    </div>
+  </div>
+
+  <div class="css-loggedin container">
+    <br><br><br>
+    <div class="row">
+      <div class="col">
+        <h4>Look at your todos below</h4>
+        <div id="listTodo" class="list-group">
+          <a href="#" class="list-group-item list-group-item-action active">
+            Cras justo odio
+          </a>
+          <a href="#" class="list-group-item list-group-item-action">Dapibus ac facilisis in</a>
+          <a href="#" class="list-group-item list-group-item-action">Morbi leo risus</a>
+          <a href="#" class="list-group-item list-group-item-action">Porta ac consectetur ac</a>
+          <a href="#" class="list-group-item list-group-item-action disabled" tabindex="-1"
+            aria-disabled="true">Vestibulum at eros</a>
+        </div>
+      </div>
+      <div class="col">
+        <p>
+          <button class="btn btn-dark" type="button" data-toggle="collapse" data-target="#collapseExample"
+            aria-expanded="false" aria-controls="collapseExample">
+            Create a Todo
+          </button>
+        </p>
+        <div class="collapse" id="collapseExample">
+          <div class="card card-body">
+            <form id="createToDo" method="POST">
+              <div class="form-group row">
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="inputTodoName" placeholder="Todo Name">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="inputDate" placeholder="Due Date">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-10">
+                  <textarea class="form-control" rows="5" id="inputDescription" placeholder="Description"></textarea>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-10">
+                  <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <h4>Todo Detail</h4>
+        <div class="css-showcard card card-body">
+          <h6>Due to:</h6>
+          <p id="showDueTo">17 Agustus 1945</p>
+          <h6>Name:</h6>
+          <p id="showTodoName">Finishing Project Sudirman</p>
+          <h6>Description:</h6>
+          <p id="showDescription">The project is about to finish. More or less we just count the days.</p>
+          <button type="submit" class="btn btn-success">Complete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="css-loggedout css-login">
+    <br><br><br>
+    <form>
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-10">
+          <input type="email" class="form-control" id="inputEmailIn" placeholder="Email">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
+        <div class="col-sm-10">
+          <input type="password" class="form-control" id="inputPasswordIn" placeholder="Password">
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-sm-10">
+          <button type="submit" class="btn btn-primary">Sign in</button>
+        </div>
+      </div>
+      <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    </form>
+  </div>
+
+  <div class="css-loggedout css-register">
+    <br><br><br>
+    <form>
+      <div class="form-group row">
+        <label for="inputEmail3" class="col-sm-2 col-form-label">Name</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="inputNameUp" placeholder="Full Name">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="inputPassword3" class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-10">
+          <input type="email" class="form-control" id="inputEmailUp" placeholder="Email">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
+        <div class="col-sm-10">
+          <input type="password" class="form-control" id="inputPasswordUp" placeholder="Password">
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-sm-10">
+          <button type="submit" class="btn btn-primary">Sign up</button>
+        </div>
+      </div>
+      <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    </form>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
     crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="./js/index.js"></script>
 </body>
+
 </html>

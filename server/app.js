@@ -8,10 +8,12 @@ const cors = require('cors');
 const router = require('./router');
 
 app.use(cors());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use('/', router);
 
 
-app.listen(PORT, `running on port:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`running on port:${PORT}`);
+})
