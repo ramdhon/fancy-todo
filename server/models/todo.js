@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/todo', { useNewUrlParser: true });
 
 const { Schema } = mongoose;
 
@@ -8,6 +7,10 @@ const todoSchema = new Schema({
   description: String,
   status: Number,
   dueDate: Date,
+  creator: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
 
 let Todo = mongoose.model('Todo', todoSchema);

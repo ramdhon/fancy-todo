@@ -1,8 +1,5 @@
 const User = require('../models/user');
 
-const { OAuth2Client } = require('google-auth-library');
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
 const jwt = require('../helpers/jwt');
 
 
@@ -110,28 +107,16 @@ class Controller {
 
 
   static signInGoogle(req, res) {
-    let getPayload = null;
-    client.verifyIdToken({
-      idToken: req.body.token,
-      audience: process.env.GOOGLE_CLIENT_ID
+    User.findOne({
+      email: req.body.email
     })
-      .then(ticket => {
-        const payload = ticket.getPayload();
-        getPayload = payload;
-        // console.log('PAYLOAD ==> ', payload);
-        // res.status(200).json(payload);
-        return User.findOne({
-          email: payload.email
-        })
-      })
       .then(user => {
         // console.log('FOUND USER >>> ', user)
         if(!user) {
           return User.create({
-            name: getPayload.name,
-            email: getPayload.email,
-            password: getPayload.at_hash,
-            todolist: []
+            name: req.body.name,
+            email: req.body.email,
+            password: ''
           })
         } else {
           return user;
@@ -142,7 +127,7 @@ class Controller {
         let token = jwt.sign({
           id: user.id,
           email: user.email
-        }, process.env.SECRET_JWT)
+        })
         // console.log('TOKEN >>> ', token);
         res.status(200).json({ message: 'login success', status: 1, token });
       })
@@ -164,7 +149,7 @@ class Controller {
           let token = jwt.sign({
             id: user.id,
             email: user.email
-          }, process.env.SECRET_JWT)
+          })
           res.status(200).json({ message: 'login success', status: 1, token })
         }
       })
@@ -185,7 +170,7 @@ class Controller {
         let token = jwt.sign({
           id: newUser.id,
           email: newUser.email
-        }, process.env.SECRET_JWT)
+        })
         res.status(201).json({ message: 'successfully created', status: 1, token, newUser });
       })
       .catch(err => {
